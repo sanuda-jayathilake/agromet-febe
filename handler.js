@@ -103,3 +103,15 @@ function response(statusCode, message) {
         response(null, response(err.statusCode, err));
       });
   };
+  // RestApi end point to get all rainfall records
+  module.exports.getAllRainfallRecords = (event, context, callback) => {
+    return db
+      .scan({
+        TableName: rainfallTable,
+      })
+      .promise()
+      .then((res) => {
+        callback(null, response(200, res.Items.sort(sortByDate)));
+      })
+      .catch((err) => callback(null, response(err.statusCode, err)));
+  };
