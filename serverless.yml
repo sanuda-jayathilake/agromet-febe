@@ -36,6 +36,12 @@ functions:
     - http:
         path: /rainfall
         method: post
+  getAllRainfallRecords:
+    handler: handler.getAllRainfallRecords
+    events:
+    - http:
+        path: /rainfall
+        method: get
 resources:
   Resources:
     UserTable:
