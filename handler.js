@@ -75,3 +75,31 @@ function response(statusCode, message) {
       })
       .catch((err) => callback(null, response(err.statusCode, err)));
   };
+
+  // RestApi end point to make a record about rainfall
+  module.exports.createRainFall = (event, context, callback) => {
+    const reqBody = JSON.parse(event.body);
+  
+    const rainfallRecord = {
+      id: uuid(),
+      createdAt: new Date().toISOString(),
+      date: reqBody.date,
+      alutwewaRainfall: reqBody.alutwewaRainfall,
+      thanamalvilaRainfall: reqBody.thanamalvilaRainfall,
+      monaragalaRainfall: reqBody.monaragalaRainfall,
+      kaltotaRainfall: reqBody.kaltotaRainfall,
+    };
+  
+    return db
+      .put({
+        TableName: rainfallTable,
+        Item: rainfallRecord,
+      })
+      .promise()
+      .then(() => {
+        callback(null, response(201, rainfallRecord));
+      })
+      .catch((err) => {
+        response(null, response(err.statusCode, err));
+      });
+  };

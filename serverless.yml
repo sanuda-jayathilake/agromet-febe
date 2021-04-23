@@ -3,6 +3,7 @@ service: sls
 custom:
   settings:
     USER_TABLE: user
+    RAINFALL_TABLE: rainfall
 
 provider:
   name: aws
@@ -19,6 +20,7 @@ provider:
         - dynamodb:UpdateItem
         - dynamodb:DeleteItem
      Resource:
+      - "arn:aws:dynamodb:${self:provider.region}:*:table/${self:custom.settings.RAINFALL_TABLE}"
       - "arn:aws:dynamodb:${self:provider.region}:*:table/${self:custom.settings.USER_TABLE}"
 
 functions:
@@ -27,6 +29,12 @@ functions:
     events:
     - http:
         path: /user
+        method: post
+  createRainfallRecord:
+    handler: handler.createRainFall
+    events:
+    - http:
+        path: /rainfall
         method: post
 resources:
   Resources:
@@ -43,3 +51,16 @@ resources:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
         TableName: ${self:custom.settings.USER_TABLE}
+    RainfallTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        AttributeDefinitions:
+        - AttributeName: "id"
+          AttributeType: "S"
+        KeySchema:
+        - AttributeName: "id"
+          KeyType: "HASH"
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+        TableName: ${self:custom.settings.RAINFALL_TABLE}
