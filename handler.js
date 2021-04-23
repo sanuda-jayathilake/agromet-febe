@@ -40,3 +40,26 @@ function response(statusCode, message) {
       })
       .catch((err) => response(null, response(err.statusCode, err)));
   };
+  // RestAPI end point to create the tank record
+  module.exports.createTank = (event, context, callback) => {
+    const reqBody = JSON.parse(event.body);
+  
+    const post = {
+      id: uuid(),
+      createdAt: new Date().toISOString(),
+      userId: 1,
+      tankName: reqBody.tankName,
+      waterAvailability: reqBody.waterAvailability,
+    };
+  
+    return db
+      .put({
+        TableName: postsTable,
+        Item: post,
+      })
+      .promise()
+      .then(() => {
+        callback(null, response(201, post));
+      })
+      .catch((err) => response(null, response(err.statusCode, err)));
+  };
