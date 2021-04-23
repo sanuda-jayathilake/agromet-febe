@@ -63,3 +63,15 @@ function response(statusCode, message) {
       })
       .catch((err) => response(null, response(err.statusCode, err)));
   };
+  // RestAPI end point to get all the tank records
+  module.exports.getAllTanks = (event, context, callback) => {
+    return db
+      .scan({
+        TableName: postsTable,
+      })
+      .promise()
+      .then((res) => {
+        callback(null, response(200, res.Items.sort(sortByDate)));
+      })
+      .catch((err) => callback(null, response(err.statusCode, err)));
+  };
